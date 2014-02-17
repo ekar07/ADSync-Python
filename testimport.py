@@ -61,20 +61,20 @@ class C:
 users=[]
 c=C()
 
-with open('/python projects/adtest.csv', 'rU') as f:
+with open('adtest.csv', 'rU') as f:
     reader = csv.reader(f)
     for row in reader:
         this_instance=user(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
         users.append(this_instance)
 
-hs = open('/python projects/HS_ADimport.bat', 'w+')
-ms = open('/python projects/MS_ADimport.bat', 'w+')
-m = open('/python projects/Muir_ADimport.bat', 'w+')
-r = open('/python projects/Rusch_ADimport.bat', 'w+')
-e = open('/python projects/Endeavor_ODimport.bat', 'w+')
-l = open('/python projects/Lewiston_ODimport.bat', 'w+')
-w = open('/python projects/Woodridge_ADimport.bat', 'w+')
-paa = open('/python projects/PAA_ADimport.bat', 'w+')
+hs = open('HS_ADimport.bat', 'w+')
+ms = open('MS_ADimport.bat', 'w+')
+m = open('Muir_ADimport.bat', 'w+')
+r = open('Rusch_ADimport.bat', 'w+')
+e = open('Endeavor_ODimport.bat', 'w+')
+l = open('Lewiston_ODimport.bat', 'w+')
+w = open('Woodridge_ADimport.bat', 'w+')
+paa = open('PAA_ADimport.bat', 'w+')
 
 for x in range(1,len(users)):
     if users[x].school == 'Portage High School':
