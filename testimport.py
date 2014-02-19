@@ -1,4 +1,4 @@
-import array, csv
+import array, csv, time, datetime
 
 class user(object):
     def __init__(self, lastname, firstname, grade, school, username, password, stuid):
@@ -67,32 +67,84 @@ with open('adtest.csv', 'rU') as f:
         this_instance=user(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
         users.append(this_instance)
 
-hs = open('HS_ADimport.bat', 'w+')
-ms = open('MS_ADimport.bat', 'w+')
-m = open('Muir_ADimport.bat', 'w+')
-r = open('Rusch_ADimport.bat', 'w+')
-e = open('Endeavor_ODimport.bat', 'w+')
-l = open('Lewiston_ODimport.bat', 'w+')
-w = open('Woodridge_ADimport.bat', 'w+')
-paa = open('PAA_ADimport.bat', 'w+')
+hs = open('Batches/HS_ADimport.bat', 'w+')
+ms = open('Batches/MS_ADimport.bat', 'w+')
+m = open('Batches/Muir_ADimport.bat', 'w+')
+r = open('Batches/Rusch_ADimport.bat', 'w+')
+e = open('Batches/Endeavor_ODimport.bat', 'w+')
+l = open('Batches/Lewiston_ODimport.bat', 'w+')
+w = open('Batches/Woodridge_ADimport.bat', 'w+')
+paa = open('Batches/PAA_ADimport.bat', 'w+')
+
+lhs = open('Logs/HS_AD_Log.txt', 'a+')
+lms = open('Logs/MS_AD_log.txt', 'a+')
+lm = open('Logs/Muir_AD_log.txt', 'a+')
+lr = open('Logs/Rusch_AD_log.txt', 'a+')
+le = open('Logs/Endeavor_OD_log.txt', 'a+')
+ll = open('Logs/Lewiston_OD_log.txt', 'a+')
+lw = open('Logs/Woodridge_AD_log.txt', 'a+')
+lpaa = open('Logs/PAA_AD_log.txt', 'a+')
+
+ts = time.time()
+st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+lhs.write('---------------- ')
+lhs.write(st)
+lhs.write(' ----------------\n')
+
+lms.write('---------------- ')
+lms.write(st)
+lms.write(' ----------------\n')
+
+lm.write('---------------- ')
+lm.write(st)
+lm.write(' ----------------\n')
+
+lr.write('---------------- ')
+lr.write(st)
+lr.write(' ----------------\n')
+
+le.write('---------------- ')
+le.write(st)
+le.write(' ----------------\n')
+
+ll.write('---------------- ')
+ll.write(st)
+ll.write(' ----------------\n')
+
+lw.write('----------------' )
+lw.write(st)
+lw.write(' ----------------\n')
+
+lpaa.write('---------------- ')
+lpaa.write(st)
+lpaa.write(' ----------------\n')
 
 for x in range(1,len(users)):
     if users[x].school == 'Portage High School':
         f = hs
+        log = lhs
     elif users[x].school == 'Wayne E. Bartels Middle School':
         f = ms
+        log = lms
     elif users[x].school == 'John Muir Elementary':
         f = m
+        log = lm
     elif users[x].school == 'Rusch Elementary':
         f = r
+        log = lr
     elif users[x].school == 'Portage Acadmey':
-        f = r
+        f = paa
+        log = lpaa
     elif users[x].school == 'Lewiston Elementary':
         f = l
+        log = ll
     elif users[x].school == 'Endeavor Elementary':
         f = e
-    elif users[x].school == 'Portage Academy':
-        f = paa
+        log = le
+
+
+
  
     f.write('dsadd user \"CN=')
     f.write(users[x].username)
@@ -114,5 +166,13 @@ for x in range(1,len(users)):
     f.write(' -desc ')
     f.write(users[x].grade)
     f.write('\n')
+    log.write(users[x].firstname)
+    log.write(' ')
+    log.write(users[x].lastname)
+    log.write(' ')
+    log.write(users[x].grade)
+    log.write('\n')
 f.close()
+log.close()
+
 
