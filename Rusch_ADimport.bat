@@ -1,0 +1,1 @@
+dsadd user "CN=TESTRUSCH2,OU=R-Student,OU=RUSCH,DC=portage,DC=k12,DC=wi,DC=us" -fn RUSCH2 -ln TEST2 -pwd 3715asdf -email TESTRUSCH2@portage.k12.wi.us -disabled no -canchpwd no -pwdneverexpires yes -memberof CN=Rusch-Stud-No-Sync,OU=RUSCH,DC=portage,DC=k12,DC=wi,DC=us -hmdir \\rusch-dc01.portage.k12.wi.us\homeDir-Rusch\Students\TESTRUSCH2 -hmdrv h: -desc 1

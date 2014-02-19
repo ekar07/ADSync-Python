@@ -91,6 +91,8 @@ for x in range(1,len(users)):
         f = l
     elif users[x].school == 'Endeavor Elementary':
         f = e
+    elif users[x].school == 'Portage Academy':
+        f = paa
  
     f.write('dsadd user \"CN=')
     f.write(users[x].username)
@@ -109,6 +111,8 @@ for x in range(1,len(users)):
     f.write(c.checkSecurityGroup(users[x].school))
     f.write(c.checkHomeDrive(users[x].school, users[x].grade, users[x].username))
     f.write(' -hmdrv h:')
+    f.write(' -desc ')
+    f.write(users[x].grade)
     f.write('\n')
 f.close()
 
