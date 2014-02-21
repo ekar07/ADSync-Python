@@ -55,8 +55,15 @@ class C:
             s= '-hmdir \\\\rusch-dc01.portage.k12.wi.us\\homeDir-Rusch\\Students\\'+myUsername
         return s
 
-
-
+    def gradYear(self, myGrade):
+        myGrade = int(myGrade)
+        d = datetime.date.today()
+        if d.month == 01 or d.month == 02 or d.month == 03 or d.month == 04 or d.month == 05:
+            gradyear = d.year + (12 - myGrade)
+        else:
+            gradyear = d.year + (13 - myGrade)
+        gradyear = str(gradyear)
+        return gradyear
 
 users=[]
 c=C()
@@ -145,7 +152,7 @@ for x in range(1,len(users)):
 
 
 
- 
+    
     f.write('dsadd user \"CN=')
     f.write(users[x].username)
     f.write(c.checkSchool(users[x].school, users[x].grade)) 
@@ -164,7 +171,7 @@ for x in range(1,len(users)):
     f.write(c.checkHomeDrive(users[x].school, users[x].grade, users[x].username))
     f.write(' -hmdrv h:')
     f.write(' -desc ')
-    f.write(users[x].grade)
+    f.write(c.gradYear(users[x].grade))
     f.write('\n')
     log.write(users[x].firstname)
     log.write(' ')
