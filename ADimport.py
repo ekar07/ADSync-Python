@@ -83,6 +83,17 @@ class C:
         gy = str(gy)
         return gy
 
+    def checkODgroup(self, mySchool):
+        if mySchool == 'Lewiston Elementary':
+            return "1026"
+        else:
+            return "1027"
+
+    def checkODhome(self, mySchool):
+        if mySchool == 'Lewiston Elementary':
+            return "/Network/Servers/lew.portage.k12.wi.us/Shared Items/student3_docs/"
+        else:
+            return "/Network/Servers/end.portage.k12.wi.us/Shared Items/endstudent/"
 # define vars
 users=[]
 c=C()
@@ -95,28 +106,28 @@ with open('AD Extract.csv', 'rU') as f:
         users.append(this_instance)
 
 # open batch script files to write to
-hs = open('Batches/HS_ADimport.bat', 'w+')
-ms = open('Batches/MS_ADimport.bat', 'w+')
-m = open('Batches/Muir_ADimport.bat', 'w+')
-r = open('Batches/Rusch_ADimport.bat', 'w+')
-e = open('Batches/Endeavor_ODimport.bat', 'w+')
-l = open('Batches/Lewiston_ODimport.bat', 'w+')
-w = open('Batches/Woodridge_ADimport.bat', 'w+')
-paa = open('Batches/PAA_ADimport.bat', 'w+')
+hs=open('Batches/HS_ADimport.bat', 'w+')
+ms=open('Batches/MS_ADimport.bat', 'w+')
+m=open('Batches/Muir_ADimport.bat', 'w+')
+r=open('Batches/Rusch_ADimport.bat', 'w+')
+e=open('Batches/Endeavor_ODimport.sh', 'w+')
+l=open('Batches/Lewiston_ODimport.sh', 'w+')
+w=open('Batches/Woodridge_ADimport.bat', 'w+')
+paa=open('Batches/PAA_ADimport.bat', 'w+')
 
 # open log files to write to
-lhs = open('Logs/HS_AD_Log.txt', 'a+')
-lms = open('Logs/MS_AD_log.txt', 'a+')
-lm = open('Logs/Muir_AD_log.txt', 'a+')
-lr = open('Logs/Rusch_AD_log.txt', 'a+')
-le = open('Logs/Endeavor_OD_log.txt', 'a+')
-ll = open('Logs/Lewiston_OD_log.txt', 'a+')
-lw = open('Logs/Woodridge_AD_log.txt', 'a+')
-lpaa = open('Logs/PAA_AD_log.txt', 'a+')
+lhs=open('Logs/HS_AD_Log.txt', 'a+')
+lms=open('Logs/MS_AD_log.txt', 'a+')
+lm=open('Logs/Muir_AD_log.txt', 'a+')
+lr=open('Logs/Rusch_AD_log.txt', 'a+')
+le=open('Logs/Endeavor_OD_log.txt', 'a+')
+ll=open('Logs/Lewiston_OD_log.txt', 'a+')
+lw=open('Logs/Woodridge_AD_log.txt', 'a+')
+lpaa=open('Logs/PAA_AD_log.txt', 'a+')
 
 # initalize logs with current timestamp
-ts = time.time()
-st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+ts=time.time()
+st=datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 lhs.write('---------------- ')
 lhs.write(st)
@@ -153,58 +164,72 @@ lpaa.write(' ----------------\n')
 # determine what school the user is in and assign the appropriate log and batch script
 for x in range(1,len(users)):
     if users[x].school == 'Portage High School':
-        f = hs
-        log = lhs
+        f=hs
+        log=lhs
     elif users[x].school == 'Wayne E. Bartels Middle School':
-        f = ms
-        log = lms
+        f=ms
+        log=lms
     elif users[x].school == 'John Muir Elementary':
-        f = m
-        log = lm
+        f=m
+        log=lm
     elif users[x].school == 'Rusch Elementary':
-        f = r
-        log = lr
+        f=r
+        log=lr
     elif users[x].school == 'Portage Acadmey':
-        f = paa
-        log = lpaa
+        f=paa
+        log=lpaa
     elif users[x].school == 'Lewiston Elementary':
-        f = l
-        log = ll
+        f=l
+        log=ll
     elif users[x].school == 'Endeavor Elementary':
-        f = e
-        log = le
+        f=e
+        log=le
 
 
 # write the line in the batch script
     gy = c.gradYear(users[x].grade)
-    f.write('dsadd user \"CN=')
-    f.write(users[x].firstname+' '+users[x].lastname)
-    f.write(c.checkSchool(users[x].school, gy)) 
-    f.write(',DC=portage,DC=k12,DC=wi,DC=us\"')
-    f.write(' -fn ')
-    f.write(users[x].firstname)
-    f.write(' -ln ')
-    f.write(users[x].lastname)
-    f.write(' -samid ')
-    f.write(users[x].username)
-    f.write(' -display ')
-    f.write('\"'+users[x].firstname + ' ' + users[x].lastname+'\"')
-    f.write(' -pwd ')
-    f.write(users[x].password)
-    f.write(' -email ')
-    f.write(users[x].username)
-    f.write('@portage.k12.wi.us ')
-    f.write(' -upn ')
-    f.write(users[x].username)
-    f.write('@portage.k12.wi.us ')
-    f.write('-disabled no -canchpwd no -pwdneverexpires yes ')
-    f.write(c.checkSecurityGroup(users[x].school))
-    f.write(c.checkHomeDrive(users[x].school, users[x].grade, users[x].username))
-    f.write(' -hmdrv h:')
-    f.write(' -desc \"')
-    f.write(gy)
-    f.write(' ' + users[x].startdate)
-    f.write('\"\n')
+    if users[x].school != 'Lewiston Elementary' and users[x].school != 'Endeavor Elementary':
+        f.write('dsadd user \"CN=')
+        f.write(users[x].firstname+' '+users[x].lastname)
+        f.write(c.checkSchool(users[x].school, gy)) 
+        f.write(',DC=portage,DC=k12,DC=wi,DC=us\"')
+        f.write(' -fn ')
+        f.write(users[x].firstname)
+        f.write(' -ln ')
+        f.write(users[x].lastname)
+        f.write(' -samid ')
+        f.write(users[x].username)
+        f.write(' -display ')
+        f.write('\"'+users[x].firstname+' '+users[x].lastname+'\"')
+        f.write(' -pwd ')
+        f.write(users[x].password)
+        f.write(' -email ')
+        f.write(users[x].username)
+        f.write('@portage.k12.wi.us ')
+        f.write(' -upn ')
+        f.write(users[x].username)
+        f.write('@portage.k12.wi.us ')
+        f.write('-disabled no -canchpwd no -pwdneverexpires yes ')
+        f.write(c.checkSecurityGroup(users[x].school))
+        f.write(c.checkHomeDrive(users[x].school, users[x].grade, users[x].username))
+        f.write(' -hmdrv h:')
+        f.write(' -desc \"')
+        f.write(gy)
+        f.write(' '+users[x].startdate)
+        f.write('\"\n')
+    else:
+        f.write('. /etc/rc.common\n')
+        f.write('dscl . create /Users/'+users[x].username+'\n')
+        f.write('dscl . create /Users/' + users[x].username + ' RealName \"' + users[x].firstname + ' ' + users[x].lastname + '\"\n')
+        f.write('dscl . passwd /Users/'+users[x].username+' '+users[x].password+'\n')
+        f.write('dscl . create /Users/'+users[x].username+' UniqueID 1'+users[x].stuid+'\n')
+        f.write('dscl . create /Users/'+users[x].username+' PrimaryGroupID '+c.checkODgroup(users[x].school)+'\n')
+        f.write('dscl . create /Users/'+users[x].username+' UserShell /bin/bash\n')
+        f.write('dscl . create /Users/'+users[x].username+' NFSHomeDirectory ' + c.checkODhome(users[x].school) + users[x].username+'\n')
+        f.write('\n')
+
+
+
 
 # write the line in the log
     log.write(users[x].firstname)
