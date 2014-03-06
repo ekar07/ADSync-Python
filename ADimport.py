@@ -70,6 +70,8 @@ class C:
         return s
     # check the user's grade and return what year they graduate
     def gradYear(self, myGrade):
+        if myGrade == 'KG' or myGrade == 'K4':
+            myGrade = '0'
         myGrade = int(myGrade)
         d = datetime.date.today()
         y = int(d.year)
@@ -81,6 +83,7 @@ class C:
             gy = y + (13 - myGrade)
 
         gy = str(gy)
+        test.close()
         return gy
 
     def checkODgroup(self, mySchool):
@@ -188,7 +191,7 @@ for x in range(1,len(users)):
 
 # write the line in the batch script
     gy = c.gradYear(users[x].grade)
-    if users[x].school != 'Lewiston Elementary' and users[x].school != 'Endeavor Elementary':
+    if users[x].school != 'Lewiston Elementary' and users[x].school != 'Endeavor Elementary' and users[x].grade != 'KG' and users[x].grade != 'K4' and users[x].grade != '1' and users[x].grade != '2':
         f.write('dsadd user \"CN=')
         f.write(users[x].firstname+' '+users[x].lastname)
         f.write(c.checkSchool(users[x].school, gy)) 
@@ -217,7 +220,7 @@ for x in range(1,len(users)):
         f.write(gy)
         f.write(' '+users[x].startdate)
         f.write('\"\n')
-    else:
+    elif users[x].school == 'Lewiston Elementary' or users[x].school == 'Endeavor Elementary':
         f.write('. /etc/rc.common\n')
         f.write('dscl . create /Users/'+users[x].username+'\n')
         f.write('dscl . create /Users/' + users[x].username + ' RealName \"' + users[x].firstname + ' ' + users[x].lastname + '\"\n')
