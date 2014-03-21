@@ -58,15 +58,15 @@ class C:
     def checkHomeDrive(self, mySchool, myGrade, myUsername):
         s=', no homedrive'
         if mySchool == 'Rusch Elementary':
-            s= '-hmdir \\\\rusch-dc01.portage.k12.wi.us\\homeDir-Rusch\\Students\\'+myUsername
+            s= '\\\\rusch-dc01.portage.k12.wi.us\\homeDir-Rusch\\Students\\'+myUsername
         elif mySchool == 'John Muir Elementary':
-            s= '-hmdir \\\\muir-dc01.portage.k12.wi.us\\homeDir\\'+myUsername
+            s= '\\\\muir-dc01.portage.k12.wi.us\\homeDir\\'+myUsername
         elif mySchool == "Wayne E. Bartels Middle School":
-            s= '-hmdir \\\\bms-dc01.portage.k12.wi.us\\homeDir\\Students\\'+myGrade+'\\'+myUsername
+            s= '\\\\bms-dc01.portage.k12.wi.us\\homeDir\\Students\\'+myGrade+'\\'+myUsername
         elif mySchool == 'Portage High School':
-            s= '-hmdir \\\\phs-fs.portage.k12.wi.us\\homeDir-PHS\\Students\\'+myGrade+'\\'+myUsername
+            s= '\\\\phs-fs.portage.k12.wi.us\\homeDir-PHS\\Students\\'+myGrade+'\\'+myUsername
         elif mySchool == 'Portage Academy':
-            s= '-hmdir \\\\rusch-dc01.portage.k12.wi.us\\homeDir-Rusch\\Students\\'+myUsername
+            s= '\\\\rusch-dc01.portage.k12.wi.us\\homeDir-Rusch\\Students\\'+myUsername
         return s
     # check the user's grade and return what year they graduate
     def gradYear(self, myGrade):
@@ -83,7 +83,6 @@ class C:
             gy = y + (13 - myGrade)
 
         gy = str(gy)
-        test.close()
         return gy
 
     def checkODgroup(self, mySchool):
@@ -109,14 +108,14 @@ with open('AD Extract.csv', 'rU') as f:
         users.append(this_instance)
 
 # open batch script files to write to
-hs=open('Batches/HS_ADimport.bat', 'w+')
-ms=open('Batches/MS_ADimport.bat', 'w+')
-m=open('Batches/Muir_ADimport.bat', 'w+')
-r=open('Batches/Rusch_ADimport.bat', 'w+')
-e=open('Batches/Endeavor_ODimport.sh', 'w+')
-l=open('Batches/Lewiston_ODimport.sh', 'w+')
-w=open('Batches/Woodridge_ADimport.bat', 'w+')
-paa=open('Batches/PAA_ADimport.bat', 'w+')
+hs=open('Batches/Import_Scripts/HS_ADimport.bat', 'w+')
+ms=open('Batches/Import_Scripts/MS_ADimport.bat', 'w+')
+m=open('Batches/Import_Scripts/Muir_ADimport.bat', 'w+')
+r=open('Batches/Import_Scripts/Rusch_ADimport.bat', 'w+')
+e=open('Batches/Import_Scripts/Endeavor_ODimport.sh', 'w+')
+l=open('Batches/Import_Scripts/Lewiston_ODimport.sh', 'w+')
+w=open('Batches/Import_Scripts/Woodridge_ADimport.bat', 'w+')
+paa=open('Batches/Import_Scripts/PAA_ADimport.bat', 'w+')
 
 # open log files to write to
 lhs=open('Logs/HS_AD_Log.txt', 'a+')
@@ -127,6 +126,13 @@ le=open('Logs/Endeavor_OD_log.txt', 'a+')
 ll=open('Logs/Lewiston_OD_log.txt', 'a+')
 lw=open('Logs/Woodridge_AD_log.txt', 'a+')
 lpaa=open('Logs/PAA_AD_log.txt', 'a+')
+
+hdhs=open('Batches/H_Drives/H_HS_ADimport.bat', 'w+')
+hdms=open('Batches/H_Drives/H_MS_ADimport.bat', 'w+')
+hdm=open('Batches/H_Drives/H_Muir_ADimport.bat', 'w+')
+hdr=open('Batches/H_Drives/H_Rusch_ADimport.bat', 'w+')
+hdw=open('Batches/H_Drives/H_Woodridge_ADimport.bat', 'w+')
+hdpaa=open('Batches/H_Drives/H_PAA_ADimport.bat', 'w+')
 
 # initalize logs with current timestamp
 ts=time.time()
@@ -164,85 +170,100 @@ lpaa.write('---------------- ')
 lpaa.write(st)
 lpaa.write(' ----------------\n')
 
+test=open('test.txt', 'a+')
+
 # determine what school the user is in and assign the appropriate log and batch script
 for x in range(1,len(users)):
-    if users[x].school == 'Portage High School':
-        f=hs
-        log=lhs
-    elif users[x].school == 'Wayne E. Bartels Middle School':
-        f=ms
-        log=lms
-    elif users[x].school == 'John Muir Elementary':
-        f=m
-        log=lm
-    elif users[x].school == 'Rusch Elementary':
-        f=r
-        log=lr
-    elif users[x].school == 'Portage Acadmey':
-        f=paa
-        log=lpaa
-    elif users[x].school == 'Lewiston Elementary':
-        f=l
-        log=ll
-    elif users[x].school == 'Endeavor Elementary':
-        f=e
-        log=le
+    if users[x].school == 'Lewiston Elementary' or users[x].school == 'Endeavor Elementary' or users[x].school == 'Rusch Elementary' or users[x].school == 'John Muir Elementary' or users[x].school == 'Wayne E. Bartels Middle School' or users[x].school == 'Portage High School' or users[x].school == 'Portage Academy':
+        test.write(users[x].school+'\n')
+
+        if users[x].school == 'Portage High School':
+            f=hs
+            log=lhs
+            hd=hdhs
+        elif users[x].school == 'Wayne E. Bartels Middle School':
+            f=ms
+            log=lms
+            hd=hdms
+        elif users[x].school == 'John Muir Elementary':
+            f=m
+            log=lm
+            hd=hdm
+        elif users[x].school == 'Rusch Elementary':
+            f=r
+            log=lr
+            hd=hdr
+        elif users[x].school == 'Portage Academy':
+            f=paa
+            log=lpaa
+            hd=hdpaa
+        elif users[x].school == 'Lewiston Elementary':
+            f=l
+            log=ll
+        elif users[x].school == 'Endeavor Elementary':
+            f=e
+            log=le
 
 
 # write the line in the batch script
-    gy = c.gradYear(users[x].grade)
-    if users[x].school != 'Lewiston Elementary' and users[x].school != 'Endeavor Elementary' and users[x].grade != 'KG' and users[x].grade != 'K4' and users[x].grade != '1' and users[x].grade != '2':
-        f.write('dsadd user \"CN=')
-        f.write(users[x].firstname+' '+users[x].lastname)
-        f.write(c.checkSchool(users[x].school, gy)) 
-        f.write(',DC=portage,DC=k12,DC=wi,DC=us\"')
-        f.write(' -fn ')
-        f.write(users[x].firstname)
-        f.write(' -ln ')
-        f.write(users[x].lastname)
-        f.write(' -samid ')
-        f.write(users[x].username)
-        f.write(' -display ')
-        f.write('\"'+users[x].firstname+' '+users[x].lastname+'\"')
-        f.write(' -pwd ')
-        f.write(users[x].password)
-        f.write(' -email ')
-        f.write(users[x].username)
-        f.write('@portage.k12.wi.us ')
-        f.write(' -upn ')
-        f.write(users[x].username)
-        f.write('@portage.k12.wi.us ')
-        f.write('-disabled no -canchpwd no -pwdneverexpires yes ')
-        f.write(c.checkSecurityGroup(users[x].school))
-        f.write(c.checkHomeDrive(users[x].school, users[x].grade, users[x].username))
-        f.write(' -hmdrv h:')
-        f.write(' -desc \"')
-        f.write(gy)
-        f.write(' '+users[x].startdate)
-        f.write('\"\n')
-    elif users[x].school == 'Lewiston Elementary' or users[x].school == 'Endeavor Elementary':
-        f.write('. /etc/rc.common\n')
-        f.write('dscl . create /Users/'+users[x].username+'\n')
-        f.write('dscl . create /Users/' + users[x].username + ' RealName \"' + users[x].firstname + ' ' + users[x].lastname + '\"\n')
-        f.write('dscl . passwd /Users/'+users[x].username+' '+users[x].password+'\n')
-        f.write('dscl . create /Users/'+users[x].username+' UniqueID 1'+users[x].stuid+'\n')
-        f.write('dscl . create /Users/'+users[x].username+' PrimaryGroupID '+c.checkODgroup(users[x].school)+'\n')
-        f.write('dscl . create /Users/'+users[x].username+' UserShell /bin/bash\n')
-        f.write('dscl . create /Users/'+users[x].username+' NFSHomeDirectory ' + c.checkODhome(users[x].school) + users[x].username+'\n')
-        f.write('\n')
+        gy = c.gradYear(users[x].grade)
+        if users[x].school != 'Lewiston Elementary' and users[x].school != 'Endeavor Elementary' and users[x].grade != 'KG' and users[x].grade != 'K4' and users[x].grade != '1' and users[x].grade != '2':
+            f.write('dsadd user \"CN=')
+            f.write(users[x].firstname+' '+users[x].lastname)
+            f.write(c.checkSchool(users[x].school, gy)) 
+            f.write(',DC=portage,DC=k12,DC=wi,DC=us\"')
+            f.write(' -fn ')
+            f.write(users[x].firstname)
+            f.write(' -ln ')
+            f.write(users[x].lastname)
+            f.write(' -samid ')
+            f.write(users[x].username)
+            f.write(' -display ')
+            f.write('\"'+users[x].firstname+' '+users[x].lastname+'\"')
+            f.write(' -pwd ')
+            f.write(users[x].password)
+            f.write(' -email ')
+            f.write(users[x].username)
+            f.write('@portage.k12.wi.us ')
+            f.write(' -upn ')
+            f.write(users[x].username)
+            f.write('@portage.k12.wi.us ')
+            f.write('-disabled no -canchpwd no -pwdneverexpires yes ')
+            f.write(c.checkSecurityGroup(users[x].school))
+            f.write('-hmdir ')
+            f.write(c.checkHomeDrive(users[x].school, gy, users[x].username))
+            f.write(' -hmdrv h:')
+            f.write(' -desc \"')
+            f.write(gy)
+            f.write(' '+users[x].startdate)
+            f.write('\"\n')
+            hd.write('mkdir ')
+            hd.write(c.checkHomeDrive(users[x].school,gy,users[x].username))
+            hd.write('\n')
+        elif users[x].school == 'Lewiston Elementary' or users[x].school == 'Endeavor Elementary':
+            f.write('. /etc/rc.common\n')
+            f.write('dscl . create /Users/'+users[x].username+'\n')
+            f.write('dscl . create /Users/'+users[x].username+' RealName \"' + users[x].firstname +' '+users[x].lastname+'\"\n')
+            f.write('dscl . passwd /Users/'+users[x].username+' '+users[x].password+'\n')
+            f.write('dscl . create /Users/'+users[x].username+' UniqueID 1'+users[x].stuid+'\n')
+            f.write('dscl . create /Users/'+users[x].username+' PrimaryGroupID '+c.checkODgroup(users[x].school)+'\n')
+            f.write('dscl . create /Users/'+users[x].username+' UserShell /bin/bash\n')
+            f.write('dscl . create /Users/'+users[x].username+' NFSHomeDirectory ' + c.checkODhome(users[x].school) + users[x].username+'\n')
+            f.write('\n')
 
 
 
 
 # write the line in the log
-    log.write(users[x].firstname)
-    log.write(' ')
-    log.write(users[x].lastname)
-    log.write(' - ')
-    log.write(gy)
-    log.write('\n')
+        log.write(users[x].firstname)
+        log.write(' ')
+        log.write(users[x].lastname)
+        log.write(' - ')
+        log.write(gy)
+        log.write('\n')
 # close the batch scripts and logs    
-f.close()
-log.close()
+    hd.close()
+    f.close()
+    log.close()
 
 
