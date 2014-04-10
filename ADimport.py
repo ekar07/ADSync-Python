@@ -7,9 +7,9 @@
 # Date: 2/24/2014
 #---------------------------------------------------------------------------------------------------
 
-import array, csv, time, datetime
+import array, csv, time, datetime, gdata.spreadsheet.service
 
-
+# Generic class to assign all user account information
 class user(object):
     def __init__(self, lastname, firstname, grade, school, stuid, username, password, startdate):
         self.lastname=lastname
@@ -20,7 +20,7 @@ class user(object):
         self.password=password
         self.stuid=stuid
         self.startdate =startdate
-
+# Generic class used to access methods
 class C:
     # check what school the user is in and place them in the correct OU
     def checkSchool(self, mySchool, myGrade):
@@ -60,7 +60,7 @@ class C:
         if mySchool == 'Rusch Elementary':
             s= '\\\\rusch-dc01.portage.k12.wi.us\\homeDir-Rusch\\Students\\'+myUsername
         elif mySchool == 'John Muir Elementary':
-            s= '\\\\muir-dc01.portage.k12.wi.us\\homeDir\\'+myUsername
+            s= '\\\\muir-dc01.portage.k12.wi.us\\homeDir\\Students\\'+myUsername
         elif mySchool == "Wayne E. Bartels Middle School":
             s= '\\\\bms-dc01.portage.k12.wi.us\\homeDir\\Students\\'+myGrade+'\\'+myUsername
         elif mySchool == 'Portage High School':
@@ -68,6 +68,22 @@ class C:
         elif mySchool == 'Portage Academy':
             s= '\\\\rusch-dc01.portage.k12.wi.us\\homeDir-Rusch\\Students\\'+myUsername
         return s
+
+    # check what school the user is in and assign the google docs spreadsheet key for that school
+    def checkGdocs(self, mySchool):
+        s=', no homedrive'
+        if mySchool == 'Rusch Elementary':
+            s= '0Ah0X0hy_gOmEdHMwQlVFOVgzUFlxelk1a2hrNWdlYkE'
+        elif mySchool == 'John Muir Elementary':
+            s= '0Ah0X0hy_gOmEdDllWTBNOVE1N1Q2M2poUXFoclhxZ3c'
+        elif mySchool == "Wayne E. Bartels Middle School":
+            s= '0Ah0X0hy_gOmEdEdVSVhzT0UtMDU5TThPNlk4RzJHcGc'
+        elif mySchool == 'Portage High School':
+            s= '0Ah0X0hy_gOmEdDlhNmlLck1OaFBEQWhibXlVVS1sRWc'
+        elif mySchool == 'Portage Academy':
+            s= '0Ah0X0hy_gOmEdDlhNmlLck1OaFBEQWhibXlVVS1sRWc'
+        return s
+
     # check the user's grade and return what year they graduate
     def gradYear(self, myGrade):
         if myGrade == 'KG' or myGrade == 'K4':
@@ -84,13 +100,13 @@ class C:
 
         gy = str(gy)
         return gy
-
+    # check the users's school and assign the appropriate OD group value
     def checkODgroup(self, mySchool):
         if mySchool == 'Lewiston Elementary':
             return "1026"
         else:
             return "1027"
-
+    # check the user's school and assign the appropriate home directory location
     def checkODhome(self, mySchool):
         if mySchool == 'Lewiston Elementary':
             return "/Network/Servers/lew.portage.k12.wi.us/Shared Items/student3_docs/"
@@ -99,6 +115,8 @@ class C:
 # define vars
 users=[]
 c=C()
+email = 'pcstechdrive@portage.k12.wi.us'
+password = '301Collins'
 
 # read IC export 
 with open('AD Extract.csv', 'rU') as f:
@@ -126,13 +144,23 @@ le=open('Logs/Endeavor_OD_log.txt', 'a+')
 ll=open('Logs/Lewiston_OD_log.txt', 'a+')
 lw=open('Logs/Woodridge_AD_log.txt', 'a+')
 lpaa=open('Logs/PAA_AD_log.txt', 'a+')
+masterlog=open('Logs/MASTER_LOG.txt', 'a+')
 
+# open homedrive creation batches
 hdhs=open('Batches/H_Drives/H_HS_ADimport.bat', 'w+')
 hdms=open('Batches/H_Drives/H_MS_ADimport.bat', 'w+')
 hdm=open('Batches/H_Drives/H_Muir_ADimport.bat', 'w+')
 hdr=open('Batches/H_Drives/H_Rusch_ADimport.bat', 'w+')
 hdw=open('Batches/H_Drives/H_Woodridge_ADimport.bat', 'w+')
 hdpaa=open('Batches/H_Drives/H_PAA_ADimport.bat', 'w+')
+
+# open homedrive CACLS batches
+chdhs=open('Batches/H_Drives/2H_HS_ADimport.bat', 'w+')
+chdms=open('Batches/H_Drives/2H_MS_ADimport.bat', 'w+')
+chdm=open('Batches/H_Drives/2H_Muir_ADimport.bat', 'w+')
+chdr=open('Batches/H_Drives/2H_Rusch_ADimport.bat', 'w+')
+chdw=open('Batches/H_Drives/2H_Woodridge_ADimport.bat', 'w+')
+chdpaa=open('Batches/H_Drives/2H_PAA_ADimport.bat', 'w+')
 
 # initalize logs with current timestamp
 ts=time.time()
@@ -170,33 +198,39 @@ lpaa.write('---------------- ')
 lpaa.write(st)
 lpaa.write(' ----------------\n')
 
-test=open('test.txt', 'a+')
+masterlog.write('---------------- ')
+masterlog.write(st)
+masterlog.write(' ----------------\n')
 
 # determine what school the user is in and assign the appropriate log and batch script
 for x in range(1,len(users)):
     if users[x].school == 'Lewiston Elementary' or users[x].school == 'Endeavor Elementary' or users[x].school == 'Rusch Elementary' or users[x].school == 'John Muir Elementary' or users[x].school == 'Wayne E. Bartels Middle School' or users[x].school == 'Portage High School' or users[x].school == 'Portage Academy':
-        test.write(users[x].school+'\n')
 
         if users[x].school == 'Portage High School':
             f=hs
             log=lhs
             hd=hdhs
+            chd=chdhs
         elif users[x].school == 'Wayne E. Bartels Middle School':
             f=ms
             log=lms
             hd=hdms
+            chd=chdms
         elif users[x].school == 'John Muir Elementary':
             f=m
             log=lm
             hd=hdm
+            chd=chdm
         elif users[x].school == 'Rusch Elementary':
             f=r
             log=lr
             hd=hdr
+            chd=chdr
         elif users[x].school == 'Portage Academy':
             f=paa
             log=lpaa
             hd=hdpaa
+            chd=chdpaa
         elif users[x].school == 'Lewiston Elementary':
             f=l
             log=ll
@@ -240,6 +274,8 @@ for x in range(1,len(users)):
             hd.write('mkdir ')
             hd.write(c.checkHomeDrive(users[x].school,gy,users[x].username))
             hd.write('\n')
+            chd.write('icacls \"'+c.checkHomeDrive(users[x].school,gy,users[x].username)+'\" /grant:r \"PORTAGE\\'+users[x].username+'\":(OI)(CI)F')
+            chd.write('\n')
         elif users[x].school == 'Lewiston Elementary' or users[x].school == 'Endeavor Elementary':
             f.write('. /etc/rc.common\n')
             f.write('dscl . create /Users/'+users[x].username+'\n')
@@ -251,19 +287,49 @@ for x in range(1,len(users)):
             f.write('dscl . create /Users/'+users[x].username+' NFSHomeDirectory ' + c.checkODhome(users[x].school) + users[x].username+'\n')
             f.write('\n')
 
-
-
-
-# write the line in the log
+        # write the line in the school log
         log.write(users[x].firstname)
         log.write(' ')
         log.write(users[x].lastname)
         log.write(' - ')
         log.write(gy)
         log.write('\n')
-# close the batch scripts and logs    
+
+        #write the line in the master log
+        masterlog.write(users[x].firstname)
+        masterlog.write(' ')
+        masterlog.write(users[x].lastname)
+        masterlog.write(' - ')
+        masterlog.write(gy)
+        masterlog.write('\n')
+
+        #Open the Google Doc password spreadsheet
+        spreadsheet_key = c.checkGdocs(users[x].school)
+        worksheet_id = 'od6'
+        #Login to the spreadsheet
+        spr_client = gdata.spreadsheet.service.SpreadsheetsService()
+        spr_client.email = email
+        spr_client.password = password
+        spr_client.source = 'Example Spreadsheet Writing Application'
+        spr_client.ProgrammaticLogin()
+        # Prepare the dictionary to write
+        dict = {}
+        dict['lastname'] = users[x].lastname
+        dict['firstname'] = users[x].firstname
+        dict['grade'] = users[x].grade
+        dict['username'] = users[x].username
+        dict['password'] = users[x].password
+        #Insert the row into the spreadsheet
+        entry = spr_client.InsertRow(dict, spreadsheet_key, worksheet_id)
+        if isinstance(entry, gdata.spreadsheet.SpreadsheetsList):
+            print "Insert row succeeded."
+        else:
+            print "Insert row failed."
+# close the batch scripts and logs  
     hd.close()
+    chd.close()
     f.close()
     log.close()
+masterlog.close() 
 
 
