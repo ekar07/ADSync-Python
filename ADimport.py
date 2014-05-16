@@ -217,11 +217,11 @@ c=C()
 email = 'pcstechdrive@portage.k12.wi.us'
 password = '3o1Collins'
 # open batch script files to write to
-bat=open('Batches\ADimport.bat', 'w+')
+bat=open('..\Batches\ADimport.bat', 'w+')
 # open log files to write to
-masterlog=open('Logs\MASTER_LOG.txt', 'a+')
+masterlog=open('..\Logs\MASTER_LOG.txt', 'a+')
 # open homedrive creation batches
-hd=open('Batches\homedrive.ps1', 'w+')
+hd=open('..\Batches\homedrive.ps1', 'w+')
 # initalize logs with current timestamp
 ts=time.time()
 st=datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -232,7 +232,7 @@ masterlog.write('       --- STUDENTS ---       \n')
 
 
 # read student IC export 
-with open('AD Extract.csv', 'rU') as f:
+with open('..\AD Extract.csv', 'rU') as f:
     reader = csv.reader(f)
     for row in reader:
         this_instance=user(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7])
@@ -331,7 +331,7 @@ for x in range(1,len(users)):
 #Prep Master Log for Faculty accounts
 masterlog.write('       --- FACULTY ---       \n')
 # process faculty accounts
-with open('Faculty.csv', 'rU') as f:
+with open('..\Faculty.csv', 'rU') as f:
     reader = csv.reader(f)
     for row in reader:
         this_instance=staff(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
