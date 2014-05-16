@@ -1,1 +1,5 @@
-LastName,FirstName,Grade,School,StudentNumber,UserName,Computer,StartDatePHSTEST,PHSTEST,9,Portage High School,12328,PHSTEST,password,3/24/14RUSCHTEST,RUSCHTEST,4,Rusch Elementary,15171,RUSCHTEST,password,4/2/14BMSTEST,BMSTEST,6,Wayne E. Bartels Middle School,15219,BMSTEST,password,3/24/14
+LastName,FirstName,Grade,School,StudentNumber,UserName,Computer,StartDate
+TESTPHS,TESTPHS,10,Portage High School,12345,TESTPHS,password,4/15/2014
+TESTBMS,TESTBMS,8,Wayne E. Bartels Middle School,12345,TESTBMS,password,4/15/2014
+TESTRUSCH,TESTRUSCH,4,Rusch Elementary,12345,TESTRUSCH,password,4/15/2014
+TESTMUIR,TESTMUIR,3,John Muir Elementary,12345,TESTMUIR,password,4/15/2014
